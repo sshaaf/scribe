@@ -58,7 +58,7 @@ public class KantraTool {
             @ToolArg(description = "The operation to perform (e.g., CREATE_JAVA_CLASS_RULE, CREATE_FILE_CONTENT_RULE, CREATE_XML_RULE, VALIDATE_RULE, GET_HELP), Be as specific as possible when choosing the operation and the parameters.")
             KantraOperation operation,
             @ToolArg(description = "JSON object containing operation parameters. " +
-                    "For CREATE_JAVA_CLASS_RULE: {ruleID, javaPattern, location (IMPORT/CLASS/METHOD_CALL/etc), message (should include before and after code examples and additional context), category (MANDATORY/OPTIONAL/POTENTIAL), effort (1-5)}. if location is ANNOTATION, you can also provide an annotated condition. " +
+                    "For CREATE_JAVA_CLASS_RULE: {ruleID, javaPattern, location (IMPORT/CLASS/METHOD_CALL/etc), message (should include before and after sections with code examples and additional tips), category (MANDATORY/OPTIONAL/POTENTIAL), effort (1-5)}. if location is ANNOTATION, you can also provide an annotated condition. " +
                     "For CREATE_FILE_CONTENT_RULE: {ruleID, filePattern, contentPattern, message, category, effort}. " +
                     "For CREATE_XML_RULE: {ruleID, xpath, message, category, effort}. " +
                     "For VALIDATE_RULE: {yamlContent}. " +
