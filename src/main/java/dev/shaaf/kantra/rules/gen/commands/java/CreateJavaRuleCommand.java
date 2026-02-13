@@ -42,25 +42,31 @@ public class CreateJavaRuleCommand extends AbstractCommand {
     @Override
     public String getExampleParams() {
         return """
-            {
-                "ruleID": "struts-action-to-spring-controller",
-                "javaPattern": "org.apache.struts.action.Action",
-                "location": "INHERITANCE",
-                "message": "Struts `Action` classes must be converted to Spring MVC `@Controller` classes.",
-                "category": "MANDATORY",
-                "effort": 5,
-                "source": "struts",
-                "target": "springboot",
-                "links": [
-                    {"title": "Spring MVC Controllers", "url": "https://docs.spring.io/spring-framework/docs/current/reference/html/web.html#mvc-controller"}
-                ],
-                "annotated": {
-                    "pattern": "optional-pattern-for-annotated",
-                    "elements": [
-                        {"name": "value", "value": ".*\\\\/$"}
-                    ]
+                {
+                  "ruleID": "jaxrs-javax-post-to-jakarta-001",
+                  "message": "## Before\\n\\n```java\\nimport javax.ws.rs.POST;\\n\\n@POST\\n@Path(\\"/cart\\")\\npublic Response addItem(CartItem item) { ... }\\n```\\n\\n## After\\n\\n```java\\nimport jakarta.ws.rs.POST;\\n\\n@POST\\n@Path(\\"/cart\\")\\npublic Response addItem(CartItem item) { ... }\\n```\\n\\n## Additional info\\n\\n- Replace all `javax.ws.rs` imports with `jakarta.ws.rs` (JAX-RS 2.x to Jakarta REST 3.x).\\n- Update Maven dependency from `javax.ws.rs:javax.ws.rs-api` to `jakarta.ws.rs:jakarta.ws.rs-api`.\\n- Requires Jakarta EE 9+ (namespace change from javax to jakarta).",
+                  "description": "Detects Java annotation: javax.ws.rs.POST",
+                  "category": "mandatory",
+                  "effort": 1,
+                  "labels": [
+                    "konveyor.io/source=javaee",
+                    "konveyor.io/target=jakartaee"
+                  ],
+                  "links": [
+                    {
+                      "title": "Jakarta REST (JAX-RS) 3.0",
+                      "url": "https://jakarta.ee/specifications/rest/3.0/"
+                    }
+                  ],
+                  "tag": [],
+                  "customVariable": [],
+                  "when": {
+                    "java.referenced": {
+                      "pattern": "javax.ws.rs.POST",
+                      "location": "ANNOTATION"
+                    }
+                  }
                 }
-            }
             """;
     }
 
