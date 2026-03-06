@@ -42,6 +42,17 @@ public abstract class AbstractCommand implements KantraCommand {
     }
 
     /**
+     * Safely extract an optional string parameter.
+     *
+     * @param params JSON parameters
+     * @param field  Field name to extract
+     * @return The string value or null if not present
+     */
+    protected String optionalString(JsonNode params, String field) {
+        return optionalString(params, field, null);
+    }
+
+    /**
      * Safely extract an optional string parameter with a default value.
      *
      * @param params       JSON parameters
@@ -52,6 +63,22 @@ public abstract class AbstractCommand implements KantraCommand {
     protected String optionalString(JsonNode params, String field, String defaultValue) {
         JsonNode node = params.get(field);
         return (node == null || node.isNull()) ? defaultValue : node.asText();
+    }
+
+    /**
+     * Safely extract a required string parameter with a default fallback.
+     *
+     * @param params       JSON parameters
+     * @param field        Field name to extract
+     * @param defaultValue Default value if field is missing
+     * @return The string value or default
+     */
+    protected String requireString(JsonNode params, String field, String defaultValue) {
+        JsonNode node = params.get(field);
+        if (node == null || node.isNull()) {
+            return defaultValue;
+        }
+        return node.asText();
     }
 
     /**

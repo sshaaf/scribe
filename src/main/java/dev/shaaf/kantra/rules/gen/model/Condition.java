@@ -18,7 +18,9 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
         @JsonSubTypes.Type(value = BuiltinXmlCondition.class, name = "builtin.xml"),
         @JsonSubTypes.Type(value = BuiltinXmlPublicIdCondition.class, name = "builtin.xmlPublicID"),
         @JsonSubTypes.Type(value = JavaReferencedCondition.class, name = "java.referenced"),
-        @JsonSubTypes.Type(value = JavaDependencyCondition.class, name = "java.dependency")
+        @JsonSubTypes.Type(value = JavaDependencyCondition.class, name = "java.dependency"),
+        @JsonSubTypes.Type(value = GoReferencedCondition.class, name = "go.referenced"),
+        @JsonSubTypes.Type(value = GoDependencyCondition.class, name = "go.dependency")
 })
 public interface Condition {
 }

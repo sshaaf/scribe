@@ -4,8 +4,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import com.fasterxml.jackson.dataformat.yaml.YAMLGenerator;
-import dev.shaaf.kantra.rules.gen.model.Rule;
-import dev.shaaf.kantra.rules.gen.model.Ruleset;
+import dev.shaaf.kantra.rules.gen.model.*;
 import jakarta.enterprise.context.ApplicationScoped;
 
 import java.util.ArrayList;
@@ -139,17 +138,46 @@ public class RuleValidator {
         if (rule.ruleId() == null || rule.ruleId().trim().isEmpty()) {
             errors.add("Rule must have a non-empty ruleID");
         }
-        
+
         if (rule.category() == null) {
             errors.add("Rule must have a category (potential, optional, or mandatory)");
         }
-        
+
         if (rule.when() == null) {
             errors.add("Rule must have a 'when' condition");
+        } else {
+            validateCondition(rule.when(), errors);
         }
-        
+
         if (rule.effort() != null && (rule.effort() < 1 || rule.effort() > 5)) {
             errors.add("Rule effort must be between 1 and 5");
+        }
+    }
+
+    private void validateCondition(Condition condition, List<String> errors) {
+        if (condition instanceof GoReferencedCondition go) {
+            if (go.pattern() == null || go.pattern().trim().isEmpty()) {
+                errors.add("go.referenced condition must have a non-empty 'pattern'");
+            }
+        } else if (condition instanceof GoDependencyCondition go) {
+            if (go.name() == null && go.nameRegex() == null) {
+                errors.add("go.dependency condition must specify either 'name' or 'nameregex'");
+            }
+            if (go.name() != null && go.nameRegex() != null) {
+                errors.add("go.dependency condition cannot specify both 'name' and 'nameregex'");
+            }
+        } else if (condition instanceof AndCondition and) {
+            if (and.conditions() != null) {
+                for (Condition subCondition : and.conditions()) {
+                    validateCondition(subCondition, errors);
+                }
+            }
+        } else if (condition instanceof OrCondition or) {
+            if (or.conditions() != null) {
+                for (Condition subCondition : or.conditions()) {
+                    validateCondition(subCondition, errors);
+                }
+            }
         }
     }
     

@@ -21,6 +21,10 @@ public enum KantraOperation {
     CREATE_JAVA_PACKAGE_RULE,
     CREATE_JAVA_METHOD_RULE,
 
+    // Go Rule Operations
+    CREATE_GO_REFERENCED_RULE,
+    CREATE_GO_DEPENDENCY_RULE,
+
     // File Content Operations
     CREATE_FILE_CONTENT_RULE,
     CREATE_PROPERTIES_RULE,
