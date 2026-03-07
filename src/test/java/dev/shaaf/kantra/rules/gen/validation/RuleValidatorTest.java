@@ -307,4 +307,29 @@ public class RuleValidatorTest {
         assertEquals(1, xmlCondition.filepaths().size());
         assertEquals("pom.xml", xmlCondition.filepaths().get(0));
     }
+
+    @Test
+    void testBuiltinFileContentCondition() throws Exception {
+        String yamlContent = """
+            ruleID: "shell-env-export-001"
+            description: "Detects export of environment variables"
+            category: "potential"
+            effort: 1
+            when:
+              builtin.filecontent:
+                filePattern: "*.sh"
+                pattern: "export\\\\s+\\\\w+="
+            """;
+
+        RuleValidator.ValidationResult result = validator.validateYamlRule(yamlContent);
+        assertTrue(result.isValid(), "Rule should be valid. Errors: " + result.errors());
+
+        Rule rule = validator.parseYamlToRule(yamlContent);
+        assertNotNull(rule);
+        assertTrue(rule.when() instanceof BuiltinFileContentCondition);
+
+        BuiltinFileContentCondition condition = (BuiltinFileContentCondition) rule.when();
+        assertEquals("*.sh", condition.filePattern());
+        assertNotNull(condition.pattern());
+    }
 }

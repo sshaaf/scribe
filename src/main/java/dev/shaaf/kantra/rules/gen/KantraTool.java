@@ -45,25 +45,27 @@ public class KantraTool {
      * @param params    JSON string containing the parameters for the operation
      * @return YAML rule string or result message from the operation
      */
-    @Tool(description = "Constructs Konveyor Kantra static analysis rules for application migration. capable of synthesizing custom YAML rulesets for discovering specific code patterns." +
+    @Tool(description = "Constructs Konveyor Kantra static analysis rules for application migration. Capable of synthesizing custom YAML rulesets for discovering specific code patterns." +
             "Use this tool to create granular rules that pinpoint explicitly defined patterns in the codebase." +
-            "Creates migration rules for Java, file content, XML, and JSON patterns. " +
+            "Creates migration rules for Java, Go, file content, XML, and JSON patterns. " +
             "Pass the operation type and parameters as JSON. " +
             "Java ops: CREATE_JAVA_CLASS_RULE (supports all JavaLocation types: IMPORT, CLASS, METHOD_CALL, CONSTRUCTOR_CALL, ANNOTATION, FIELD, METHOD, INHERITANCE, IMPLEMENTS_TYPE, ENUM, RETURN_TYPE, VARIABLE_DECLARATION, TYPE, PACKAGE); " +
+            "Go ops: CREATE_GO_REFERENCED_RULE (semantic type detection), CREATE_GO_DEPENDENCY_RULE (module dependency detection with version constraints); " +
             "File ops: CREATE_FILE_CONTENT_RULE, CREATE_FILE_RULE; " +
             "XML ops: CREATE_XML_RULE; " +
             "JSON ops: CREATE_JSON_RULE; " +
             "Utility ops: VALIDATE_RULE, GET_HELP")
     public String executeKantraOperation(
-            @ToolArg(description = "The operation to perform (e.g., CREATE_JAVA_CLASS_RULE, CREATE_FILE_CONTENT_RULE, CREATE_XML_RULE, VALIDATE_RULE, GET_HELP), Be as specific as possible when choosing the operation and the parameters.")
+            @ToolArg(description = "The operation to perform (e.g., CREATE_JAVA_CLASS_RULE, CREATE_GO_REFERENCED_RULE, CREATE_GO_DEPENDENCY_RULE, CREATE_FILE_CONTENT_RULE, CREATE_XML_RULE, VALIDATE_RULE, GET_HELP). Be as specific as possible when choosing the operation and the parameters.")
             KantraOperation operation,
             @ToolArg(description = "JSON object containing operation parameters. " +
-                    "For CREATE_JAVA_CLASS_RULE: {ruleID (should have a numeric postfix e.g -001, javaPattern, location (IMPORT/CLASS/METHOD_CALL/etc), message (**minimum 10 lines of detailed description in markdown format**, with three headings (Before, After, Additional info). Before and After sections properly marked with clear code examples. Additional info should include a bullet list for further improvements), category (MANDATORY/OPTIONAL/POTENTIAL), effort (1-5)}, labels (clear definition of source and target e.g.  - konveyor.io/source=karaf\n" +
-                    "  - konveyor.io/target=springboot), links (title (article title), url (documentation, article or blog lin)) . if location is ANNOTATION, you can also provide an annotated condition. " +
+                    "For CREATE_JAVA_CLASS_RULE: {ruleID (should have a numeric postfix e.g -001), javaPattern, location (IMPORT/CLASS/METHOD_CALL/etc), message (**minimum 10 lines of detailed description in markdown format**, with three headings (Before, After, Additional info). Before and After sections properly marked with clear code examples. Additional info should include a bullet list for further improvements), category (MANDATORY/OPTIONAL/POTENTIAL), effort (1-5), labels (clear definition of source and target e.g. konveyor.io/source=karaf, konveyor.io/target=springboot), links (title (article title), url (documentation, article or blog link))}. If location is ANNOTATION, you can also provide an annotated condition. " +
+                    "For CREATE_GO_REFERENCED_RULE: {ruleID (numeric postfix e.g -001), pattern (regex pattern for Go type names, e.g. '\\\\bIngress\\\\b'), message (detailed markdown with Before/After code examples), category (MANDATORY/OPTIONAL/POTENTIAL), effort (1-5), labels (e.g. konveyor.io/source=ingress-nginx, konveyor.io/target=gateway-api), links (optional)}. Pattern uses semantic type detection via Go language server. " +
+                    "For CREATE_GO_DEPENDENCY_RULE: {ruleID (numeric postfix), name OR nameRegex (module path, e.g. 'github.com/gin-gonic/gin' or regex pattern), lowerbound (optional, inclusive version), upperbound (optional, exclusive version), message (detailed markdown), category (MANDATORY/OPTIONAL/POTENTIAL), effort (1-5), labels, links (optional)}. Either 'name' or 'nameRegex' required, not both. " +
                     "For CREATE_FILE_CONTENT_RULE: {ruleID, filePattern, contentPattern, message, category, effort}. " +
                     "For CREATE_XML_RULE: {ruleID, xpath, message, category, effort}. " +
                     "For VALIDATE_RULE: {yamlContent}. " +
-                    "For GET_HELP: {topic (java/file/xml/json/operations)}")
+                    "For GET_HELP: {topic (java/go/file/xml/json/operations)}")
             String params) {
 
         // Check if operation is available (might be disabled via config)
